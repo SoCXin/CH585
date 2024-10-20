@@ -7,6 +7,15 @@
 
 [CH585](https://www.wch.cn/products/CH585.html) 是集成BLE无线通讯和高速USB及NFC的RISC-V MCU微控制器。片上集成了2Mbps低功耗蓝牙BLE通讯模块、USB全速控制器及收发器、USB高速控制器及收发器（480Mbps）、NFC近场通信无线接口、段式LCD驱动模块、LED点阵屏接口、2个SPI、4个串口、14路ADC、触摸按键检测模块等丰富的外设资源。
 
+``` mermaid
+gantt
+    title WCH SDK
+    dateFormat  YYYY-MM-DD
+    section Mainline Release
+    v1.0           :a1, 2024-06-01, 2024-09-30
+    v1.1           :a2, 2024-09-30, 2024-12-30
+```
+
 ### 关键特性
 
 * 32KHz - 78MHz RISC-V3C,支持RV32IMBC指令集和自扩展指令
@@ -35,3 +44,18 @@
 ## [选型建议](https://github.com/SoCXin)
 
 [CH585](https://github.com/SoCXin/CH585) 在紧凑的封装内集成了高速USB(480Mbps +PHY)，同时还具有BLE 5.4以及NFC通信。
+
+相对[CH592](https://github.com/SoCXin/CH592)系列的低功耗BLE产品，规格差异体现在：
+
+* 更高主频 78MHz RISC-V3C vs 20MHz RISC-V4C
+* 更大内存 128KB SRAM vs 26KB SRAM
+* 独有的USB HS 480Mbps
+* 已发布的NFC功能及其方案
+
+相对[CH583](https://github.com/SoCXin/CH583)系列的低功耗BLE产品，规格差异体现在：
+
+* 内核差异 78MHz RISC-V3C (RV32IMBC) vs 80MHz RISC-V4A (RV32IMAC)
+* 内存差异 128KB SRAM vs 32KB SRAM
+* 射频差异 BLE5.4(-95dBm,+4.5dBm) vs BLE5.3(-98dBm,+6dBm)
+* 独有的USB HS 480Mbps
+* 已发布的NFC功能及其方案
