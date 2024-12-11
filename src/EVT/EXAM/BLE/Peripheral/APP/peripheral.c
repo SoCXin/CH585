@@ -352,6 +352,7 @@ uint16_t Peripheral_ProcessEvent(uint8_t task_id, uint16_t events)
     if(events & SBP_PARAM_UPDATE_EVT)
     {
         // Send connect param update request
+        // When the current connection parameters already meet the requirements for update, return 0x18(InvalidRange)
         GAPRole_PeripheralConnParamUpdateReq(peripheralConnList.connHandle,
                                              DEFAULT_DESIRED_MIN_CONN_INTERVAL,
                                              DEFAULT_DESIRED_MAX_CONN_INTERVAL,

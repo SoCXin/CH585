@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : ISO14443-3A.h
  * Author             : WCH
- * Version            : V1.0
- * Date               : 2024/08/05
+ * Version            : V1.1
+ * Date               : 2024/11/12
  * Description        : ISO14443-3A相关函数
  * Copyright (c) 2024 Nanjing Qinheng Microelectronics Co., Ltd.
  * SPDX-License-Identifier: Apache-2.0
@@ -12,6 +12,11 @@
 
 #include "CH58x_common.h"
 #include "wch_nfca_crypto1.h"
+
+/* NFC PICC ISO14443A快速防冲突，有些情况下，计算速度可能来不及给读卡器回复，使能IS014443A_FAST_CL可以通过提前计算数据的api来加速处理，也可以自行使用函数处理 */
+#ifndef IS014443A_FAST_CL                           /* 公用文件，请尽量在工程配置中添加该宏定义进行修改 */
+#define IS014443A_FAST_CL                           0
+#endif
 
 #define ISO14443A_CMD_REQA                          0x26
 #define ISO14443A_CMD_WUPA                          0x52
@@ -98,5 +103,19 @@ extern uint8_t ISO14443ACheckOddParityBit(uint8_t *data, uint8_t *parity, uint16
  * @return  1 if the parity is correct, 0 is wrong.
  */
 extern void ISO14443ACalOddParityBit(uint8_t *data, uint8_t *out_parity, uint16_t len);
+
+/*********************************************************************
+ * @fn      ISO14443ASelect
+ *
+ * @brief   卡片选择流程处理
+ *
+ * @param   data        - 数据指针
+ * @param   bit_count   - 数据比特数量指针
+ * @param   uid         - 自身的卡片uid数据指针
+ * @param   sak         - 自身的卡片sak值
+ *
+ * @return  1 - 还在卡片选择流程中，0 - 卡片选择流程结束.
+ */
+extern uint8_t ISO14443ASelect(uint8_t *data, uint16_t *bit_count, uint8_t *uid, uint8_t sak);
 
 #endif  /* _ISO14443_3A_H_ */

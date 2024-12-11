@@ -16,9 +16,9 @@
 
 #include "config.h"
 #include "buf.h"
-#include "atomic.h"
 
-#define   USB_UartEnable                1
+#define   USBHS_ENABLE                  1
+#define   USBFS_ENABLE                  1
 
 /*process events*/
 #define UART_RECEIVE_POLL_EVT           (1<<0)

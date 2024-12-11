@@ -59,7 +59,7 @@ int main()
         PRINT("%02x ", TestBuf[i]);
     }
     PRINT("\n");
-
+    // Data-Flash minimal size for erasing is EEPROM_PAGE_SIZE
     s = EEPROM_ERASE(0, EEPROM_BLOCK_SIZE);
     PRINT("EEPROM_ERASE=%02x\n", s);
     PRINT("EEPROM_READ...\n");

@@ -1,7 +1,7 @@
 /********************************** (C) COPYRIGHT ******************************
  * File Name         : CH58xBLE_ROM.H
  * Author            : WCH
- * Version           : v1.10
+ * Version           : v1.20
  * Date              : 2024/04/10
  * Description       : head file(ch585/ch584)
  *                    Address Space
@@ -124,7 +124,6 @@ typedef struct tag_ble_clock_config
     uint16_t ClockFrequency;        // The timing clock frequency(Hz)
     uint16_t ClockAccuracy;         // The timing clock accuracy(ppm)
     uint8_t  irqEnable;             // resv
-    // resv
     uint32_t Clock1Frequency;
     pfnGetSysClock getClock1Value;
     pfnSetSysClockIRQ SetClock1PendingIRQ;
@@ -156,7 +155,7 @@ typedef struct
 /*********************************************************************
  * GLOBAL MACROS
  */
-#define VER_FILE  "CH585_BLE_LIB_V1.1"
+#define VER_FILE  "CH585_BLE_LIB_V1.2"
 extern const uint8_t VER_LIB[];  // LIB version
 #define SYSTEM_TIME_MICROSEN            625   // unit of process event timer is 625us
 #define MS1_TO_SYSTEM_TIME(x)  ((x)*1000/SYSTEM_TIME_MICROSEN)   // transform unit in ms to unit in 625us ( attentional bias )

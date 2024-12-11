@@ -340,6 +340,7 @@ void RFRole_Init(void)
         gRxParam.crcInit = gParm.crcInit;
         gRxParam.properties = gParm.properties;
         gRxParam.rxDMA = (uint32_t)RxBuf;
+        gRxParam.rxMaxLen = TEST_DATA_LEN;
     }
     PFIC_EnableIRQ( BLEB_IRQn );
     PFIC_EnableIRQ( BLEL_IRQn );

@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : wch_nfca_pcd_config.h
  * Author             : WCH
- * Version            : V1.0
- * Date               : 2024/08/22
+ * Version            : V1.1
+ * Date               : 2024/11/14
  * Description        : NFC-A PCD底层配置
  *********************************************************************************
  * Copyright (c) 2024 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -14,6 +14,10 @@
 #define _WCH_NFCA_PCD_CONFIG_H_
 
 #include "CH58x_common.h"
+
+#ifndef NFCA_PCD_USE_NFC_CTR_PIN
+#define NFCA_PCD_USE_NFC_CTR_PIN                                1       /* 是否额外使用NFC PCD天线控制引脚NFC_CTR，可以使用该引脚对天线信号分压进行控制，来获得更宽泛的工作范围 */
+#endif
 
 #ifndef NFCA_PCD_DATA_BUF_SIZE
 #define NFCA_PCD_DATA_BUF_SIZE                                  32      /* NFC PCD信号数据缓存区大小配置 */

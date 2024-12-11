@@ -845,7 +845,6 @@ void USB2_DEVICE_IRQHandler( void )
                         USB_RecLen = R16_U2EP1_RX_LEN;
                         R8_U2EP1_RX_CTRL ^= USBHS_UEP_R_TOG_DATA1;
                         R8_U2EP1_RX_CTRL = (R8_U2EP1_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_NAK;
-                        DownloadPoint_Busy = 0;
                     }
                     R8_U2EP1_RX_CTRL &= ~USBHS_UEP_R_DONE;
                    break;

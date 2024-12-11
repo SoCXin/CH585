@@ -1,8 +1,9 @@
 /* Define for CH585         */
 /* Website:  http://wch.cn  */
 /* Email:    tech@wch.cn    */
-/* Author:   W.ch 2024.07   */
-/* V1.1 SpecialFunctionRegister */
+/* Author:   rdl14 2024.09   */
+/* V1.0 SpecialFunctionRegister */
+/* V1.01 update define of RAM ROM FLASH PLL,correct chip id*/
 
 // multi-blocks: __BASE_TYPE__, __CH585SFR_H__, __CH585USBSFR_H__, __USB_TYPE__...
 
@@ -278,10 +279,13 @@ extern "C" {
 #define  RB_CLK_PLL_PON     0x10                      // RWA, enable PLL power on
 
 // Fck32k = RB_CLK_OSC32K_XT ? XT_32KHz : RC_32KHz
-// Fpll = XT_32MHz * 15 = 480MHz
-// Fsys = RB_CLK_SYS_MOD==3 ? Fck32k : ( ( RB_CLK_SYS_MOD[0] ? Fpll : XT_32MHz ) / RB_CLK_PLL_DIV )
-// default: Fsys = XT_32MHz / RB_CLK_PLL_DIV = 32MHz / 5 = 6.4MHz
-//   range: 32KHz, 2MHz~10MHz, 15MHz~80MHz
+// Fpll = XT_32MHz/2 * 39 = 624MHz
+// Fpll_div2 = Fpll/2 = 312MHz
+// Fsys = RB_CLK_SYS_MOD[1] ? (RB_CLK_SYS_MOD[0] ? Fck32k : (RB_OSC32M_SEL ? Fck32m : Fck16m) ) :
+//( (( RB_CLK_SYS_MOD[0] ? Fpll_div2 : (RB_OSC32M_SEL ? Fck32m : Fck16m) ) / RB_CLK_PLL_DIV 
+
+// default: Fsys = Fck16m/ RB_CLK_PLL_DIV = 16MHz / 3 = 5.33MHz
+//   range: 32KHz, 1MHz~32MHz, 9.75MHz～78MHz
 
 /* System: sleep control register */
 #define R32_SLEEP_CONTROL   (*((PUINT32V)0x4000100C)) // RWA, sleep control, SAM
@@ -656,102 +660,137 @@ extern "C" {
 /* GPIO alias name */
 #define  bAIN9              (1<<0)                    // PA0
 #define  bSCK1              (1<<0)                    // PA0
+
 #define  bAIN8              (1<<1)                    // PA1
-#define  bSDO               (1<<1)                    // PA1
-#define  bMOSI1             bSDO
+#define  bMOSI1             (1<<1)
+
 #define  bAIN7              (1<<2)                    // PA2
-#define  bSDI               (1<<2)                    // PA2
-#define  bMISO1             bSDI
+#define  bMISO1             (1<<2)
+#define  bTMR3_             (1<<2)
+#define  bCAP3_             bTMR3_
+#define  bPWM3_             bTMR3_
+#define  bRI                (1<<2)
+
 #define  bAIN6              (1<<3)                    // PA3
+
 #define  bAIN0              (1<<4)                    // PA4
 #define  bRXD3              (1<<4)                    // PA4
-#define  bRXD3_             (1<<4)                    // PA4
+
 #define  bAIN1              (1<<5)                    // PA5
 #define  bTXD3              (1<<5)                    // PA5
-#define  bTXD3_             (1<<5)                    // PA5
+
 #define  bAIN10             (1<<6)                    // PA6
-#define  bRXD2_             (1<<6)                    // PA6
+#define  bRXD2              (1<<6)                    // PA6
 #define  bPWM4_             (1<<6)                    // PA6
+
 #define  bAIN11             (1<<7)                    // PA7
-#define  bTXD2_             (1<<7)                    // PA7
+#define  bTXD2              (1<<7)                    // PA7
 #define  bPWM5_             (1<<7)                    // PA7
+
 #define  bAIN12             (1<<8)                    // PA8
 #define  bRXD1              (1<<8)                    // PA8
+#define  bTIO_              (1<<8)                    // PA8
+
 #define  bAIN13             (1<<9)                    // PA9
 #define  bTMR0              (1<<9)                    // PA9
 #define  bCAP0              bTMR0
 #define  bPWM0              bTMR0
 #define  bTXD1              (1<<9)                    // PA9
+#define  bTCK_              (1<<9)                    // PA9
+
 #define  bX32KI             (1<<10)                   // PA10
 #define  bTMR1              (1<<10)                   // PA10
 #define  bCAP1              bTMR1
 #define  bPWM1              bTMR1
+
 #define  bX32KO             (1<<11)                   // PA11
 #define  bTMR2              (1<<11)                   // PA11
 #define  bCAP2              bTMR2
 #define  bPWM2              bTMR2
+
 #define  bAIN2              (1<<12)                   // PA12
 #define  bPWM4              (1<<12)                   // PA12
 #define  bSCS               (1<<12)                   // PA12
+
 #define  bAIN3              (1<<13)                   // PA13
 #define  bSCK0              (1<<13)                   // PA13
 #define  bPWM5              (1<<13)                   // PA13
+
 #define  bAIN4              (1<<14)                   // PA14
-#define  bMOSI              (1<<14)                   // PA14
+#define  bMOSI0             (1<<14)                   // PA14
 #define  bTXD0_             (1<<14)                   // PA14
+
 #define  bAIN5              (1<<15)                   // PA15
-#define  bMISO              (1<<15)                   // PA15
+#define  bMISO0             (1<<15)                   // PA15
 #define  bRXD0_             (1<<15)                   // PA15
+
 #define  bPWM6              (1<<0)                    // PB0
 #define  bCTS               (1<<0)                    // PB0
+
 #define  bDSR               (1<<1)                    // PB1
 #define  bPWM7_             (1<<1)                    // PB1
-#define  bRI                (1<<2)                    // PB2
+
 #define  bPWM8_             (1<<2)                    // PB2
+
 #define  bDCD               (1<<3)                    // PB3
 #define  bPWM9_             (1<<3)                    // PB3
+
 #define  bPWM7              (1<<4)                    // PB4
 #define  bRXD0              (1<<4)                    // PB4
+
 #define  bDTR               (1<<5)                    // PB5
+
 #define  bRTS               (1<<6)                    // PB6
 #define  bPWM8              (1<<6)                    // PB6
+
 #define  bTXD0              (1<<7)                    // PB7
 #define  bPWM9              (1<<7)                    // PB7
+
 #define  bUDM               (1<<10)                   // PB10
 #define  bTMR1_             (1<<10)                   // PB10
 #define  bCAP1_             bTMR1_
 #define  bPWM1_             bTMR1_
+
 #define  bUDP               (1<<11)                   // PB11
 #define  bTMR2_             (1<<11)                   // PB11
 #define  bCAP2_             bTMR2_
 #define  bPWM2_             bTMR2_
+
 #define  bU2DM              (1<<12)                   // PB12
-#define  bSCS_              (1<<12)                   // PB12
+#define  bSCS0_             (1<<12)                   // PB12
 #define  bRXD1_             (1<<12)                   // PB12
+#define  bSDA               (1<<12)                   // PB12
+
 #define  bU2DP              (1<<13)                   // PB13
 #define  bSCK0_             (1<<13)                   // PB13
 #define  bTXD1_             (1<<13)                   // PB13
+#define  bSCL               (1<<13)                   // PB13
+
 #define  bTIO               (1<<14)                   // PB14
 #define  bDSR_              (1<<14)                   // PB14
-#define  bMOSI_             (1<<14)                   // PB14
-#define  bSDA               (1<<14)                   // PB14
+#define  bMOSI0_            (1<<14)                   // PB14
 #define  bPWM10             (1<<14)                   // PB14
+
 #define  bTCK               (1<<15)                   // PB15
-#define  bMISO_             (1<<15)                   // PB15
-#define  bSCL               (1<<15)                   // PB15
+#define  bMISO0_            (1<<15)                   // PB15
 #define  bDTR_              (1<<15)                   // PB15
-#define  bRXD2              (1<<22)                   // PB22
+
+#define  bRXD3_             (1<<20)                   // PB20      
+#define  bSDA_              (1<<20)                   // PB20      
+
+#define  bTXD3_             (1<<21)                   // PB21  
+#define  bSCL_              (1<<21)                   // PB21  
+
+#define  bRXD2_             (1<<22)                   // PB22
 #define  bTMR3              (1<<22)                   // PB22
 #define  bCAP3              bTMR3
 #define  bPWM3              bTMR3
-#define  bTMR3_             (1<<22)                   // PB22
-#define  bCAP3_             bTMR3_
-#define  bPWM3_             bTMR3_
+
 #define  bRST               (1<<23)                   // PB23
 #define  bTMR0_             (1<<23)                   // PB23
 #define  bCAP0_             bTMR0_
 #define  bPWM0_             bTMR0_
-#define  bTXD2              (1<<23)                   // PB23
+#define  bTXD2_             (1<<23)                   // PB23
 #define  bPWM11             (1<<23)                   // PB23
 
 /* Timer0 register */
@@ -1282,7 +1321,7 @@ extern "C" {
 #define  RB_LCD_BIAS        0x04                      // RW, LCD bias select:  0=1/2 bias,  1=1/3 bias
 #define  RB_LCD_DUTY        0x18                      // RW, LCD duty select:  00=1/2 duty,  01=1/3 duty,  10=1/4 duty
 #define  RB_LCD_SCAN_CLK    0x60                      // RW, LCD scan clock select: 00=256Hz, 01=512Hz, 10=1KHz, 11=128Hz
-#define  RB_LCD_VLCD_SEL    0x80                      // RW, LCD drive voltage��0=VIO33*100%(3.3V),1=VIO33*76%(2.5V)
+#define  RB_LCD_VLCD_SEL    0x80                      // RW, LCD drive voltage select 0=VIO33*100%(3.3V),1=VIO33*76%(2.5V)
 
 #define R32_LCD_RAM0        (*((PUINT32V)(0x40006004)))  // RW, LCD driver data0, address 0-3
 #define R32_LCD_RAM1        (*((PUINT32V)(0x40006008))) // RW, LCD driver data1, address 4-7
@@ -1300,7 +1339,7 @@ extern "C" {
 #define BA_SFR              ((PUINT32)0x40000000)     // point SFR base address
 #define SZ_SFR              0x00010000                // SFR size
 #define BA_RAM              ((PUINT32)0x20000000)     // point RAM base address
-#define SZ_RAM              0x00006800                // RAM size
+#define SZ_RAM              0x00020000                // RAM size
 
 /* Special Program Space */
 #define DATA_FLASH_ADDR     0x70000                   // start address of Data-Flash
@@ -1313,7 +1352,7 @@ extern "C" {
 /*----- Reference Information --------------------------------------------*/
 #define ID_CH585            0x93                      // chip ID
 #define ID_CH584            0x92                      // chip ID
-#define ID_CH585C           0x91                      // chip ID
+#define ID_CH585C           0x90                      // chip ID
 
 /* Interrupt routine address and interrupt number */
 #define INT_ID_TMR0         16                        // interrupt number for Timer0
@@ -1829,7 +1868,7 @@ extern "C" {
 #endif
 
 #ifndef USB_DEVICE_ADDR
-#define USB_DEVICE_ADDR         0x02
+#define USB_DEVICE_ADDR         0x02    /*default addr of USB */
 #endif
 #ifndef DEFAULT_ENDP0_SIZE
 #define DEFAULT_ENDP0_SIZE      8       /* default maximum packet size for endpoint 0 */
@@ -1838,12 +1877,12 @@ extern "C" {
 #define MAX_PACKET_SIZE         64      /* maximum packet size */
 #endif
 #ifndef USB_BO_CBW_SIZE
-#define USB_BO_CBW_SIZE         0x1F
-#define USB_BO_CSW_SIZE         0x0D
+#define USB_BO_CBW_SIZE         0x1F    /* total length of CBW command block */
+#define USB_BO_CSW_SIZE         0x0D    /* total length of CSW command state block */
 #endif
 #ifndef USB_BO_CBW_SIG
-#define USB_BO_CBW_SIG          0x43425355
-#define USB_BO_CSW_SIG          0x53425355
+#define USB_BO_CBW_SIG          0x43425355  /* identification mark of CBW command block 'USBC' */
+#define USB_BO_CSW_SIG          0x53425355  /* identification mark of CSW command state block 'USBC'USBS' */
 #endif
 
 #ifndef __PACKED

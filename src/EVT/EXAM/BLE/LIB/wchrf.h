@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT ******************************
  * File Name         : wchrf.h
  * Author            : WCH
- * Version           : V1.10
- * Date              : 2024/7/27
+ * Version           : V1.20
+ * Date              : 2024/9/27
  * Description       : head file(CH585/CH584)
  *
  * Copyright (c) 2023 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -58,6 +58,7 @@ typedef struct
 #define    RF_STATE_TX_FINISH      (1<<4)
 #define    RF_STATE_TX_IDLE        (1<<5)
 #define    RF_STATE_RX_RETRY       (1<<6)
+#define    RF_STATE_MAP_UPDATE     (1<<7) //!< map update enable
 } rfRoleConfig_t;
 
 /*********************************************************************
@@ -82,7 +83,7 @@ typedef struct
 #define  RF_ROLE_ID_MASK         (0x07)
 #define  RF_ROLE_BOUND_MAX       (0x07)
 #define  RF_ROLE_BOUND_ID        RF_ROLE_ID_INVALD
-
+#define  RF_ROLE_DISCARDED_EN    (1<<3)
 /* package type */
 typedef struct
 {
@@ -119,6 +120,7 @@ typedef struct
                                   //!< BIT4-5 00-1M  01-2M
     uint32_t txDMA;               //!< Tx DMA address
     uint8_t  whiteChannel;        //!< white channel(properties bit2 = 1)
+    uint8_t  sendTime;            //!< Time to switch from Rx t0 Tx (N*0.5us)+24us
     uint16_t sendCount;           //!< resend count
 } rfipTx_t;
 
@@ -376,11 +378,23 @@ bStatus_t RFRole_ClearRxData( uint8_t dev_id );
 /**
  * @brief   switch rf mode,must idle status.
  *
- * @param   mode - 0:BLE   1:RF
+ * @param   mode - 0:BLE   1:RF basic  2:RF fast
  *
  * @return  0-success.
  */
 bStatus_t RFRole_SwitchMode( uint8_t mode );
+
+/**
+ * @brief   channel map detection and start map update
+ *
+ * note: only the host role can be called
+ *
+ * @param   rssi -
+ * @param   id -
+ *
+ * @return  0-success.
+ */
+bStatus_t RFRole_MapCheck( int8_t rssi,uint8_t id );
 
 /**
  * @brief   library-basic initial

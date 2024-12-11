@@ -1,7 +1,7 @@
 /********************************** (C) COPYRIGHT ******************************
  * File Name         : CH58xBLE_LIB.H
  * Author            : WCH
- * Version           : v1.10
+ * Version           : v1.20
  * Date              : 2024/04/10
  * Description       : head file(ch585/ch584)
  * Copyright (c) 2023 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -153,7 +153,7 @@ typedef struct
 /*********************************************************************
  * GLOBAL MACROS
  */
-#define VER_FILE  "CH585_BLE_LIB_V1.1"
+#define VER_FILE  "CH585_BLE_LIB_V1.2"
 extern const uint8_t VER_LIB[];  // LIB version
 #define SYSTEM_TIME_MICROSEN            625   // unit of process event timer is 625us
 #define MS1_TO_SYSTEM_TIME(x)  ((x)*1000/SYSTEM_TIME_MICROSEN)   // transform unit in ms to unit in 625us ( attentional bias )

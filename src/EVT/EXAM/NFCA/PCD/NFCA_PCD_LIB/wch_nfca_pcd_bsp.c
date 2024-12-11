@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : wch_nfca_pcd_bsp.c
  * Author             : WCH
- * Version            : V1.0
- * Date               : 2024/08/22
+ * Version            : V1.1
+ * Date               : 2024/11/14
  * Description        : NFC-A PCD BSP底层接口
  *********************************************************************************
  * Copyright (c) 2024 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -13,7 +13,7 @@
 #include "wch_nfca_pcd_bsp.h"
 
 /* 每个文件单独debug打印的开关，置0可以禁止本文件内部打印 */
-#define DEBUG_PRINT_IN_THIS_FILE 0
+#define DEBUG_PRINT_IN_THIS_FILE 1
 #if DEBUG_PRINT_IN_THIS_FILE
 #define PRINTF(...) PRINT(__VA_ARGS__)
 #else
@@ -29,6 +29,43 @@ static uint16_t gs_lpcd_adc_base_value;
 static uint16_t gs_lpcd_adc_filter_buf[8];
 uint16_t g_nfca_pcd_recv_buf_len;
 uint32_t g_nfca_pcd_recv_bits;
+
+#if NFCA_PCD_USE_NFC_CTR_PIN
+
+void nfca_pcd_ctr_init(void)
+{
+    GPIOA_ModeCfg(GPIO_Pin_7, GPIO_ModeOut_PP_5mA);
+    GPIOA_ResetBits(GPIO_Pin_7);
+    nfca_pcd_set_lp_ctrl(NFCA_PCD_LP_CTRL_0_5_VDD);
+}
+
+__always_inline static inline void nfca_pcd_ctr_on(void)
+{
+    /* 输出使能，输出低，不可输出高，天线峰峰值分压3分之一 */
+    R32_PA_DIR |= (GPIO_Pin_7);
+}
+
+__always_inline static inline void nfca_pcd_ctr_off(void)
+{
+    /* 输出禁止，模拟输入，天线峰峰值几乎不分压 */
+    R32_PA_DIR &= ~(GPIO_Pin_7);
+}
+
+void nfca_pcd_ctr_handle(void)
+{
+    if(nfca_pcd_get_lp_status())
+    {
+        /* 峰峰值过低 */
+        PRINTF("LP\n");
+        nfca_pcd_ctr_off();
+    }
+    else
+    {
+        nfca_pcd_ctr_on();
+    }
+}
+
+#endif
 
 /*********************************************************************
  * @fn      nfca_pcd_init
@@ -50,6 +87,10 @@ void nfca_pcd_init(void)
     R32_PIN_IN_DIS |= ((GPIO_Pin_8 | GPIO_Pin_9) << 16);        /* 关闭GPIOB中GPIO_Pin_8和GPIO_Pin_9的数字输入功能 */
     R16_PIN_CONFIG |= ((GPIO_Pin_16 | GPIO_Pin_17) >> 8);       /* 关闭GPIOB中GPIO_Pin_16和GPIO_Pin_17的数字输入功能 */
 
+    /* CH584F和CH585F内部PA9和PB9短接，需要将PA9也设置为模拟输入并关闭数字功能，M封装注释下面的两句代码，F封装取消注释 */
+//    GPIOA_ModeCfg(GPIO_Pin_9, GPIO_ModeIN_Floating);
+//    R32_PIN_IN_DIS |= GPIO_Pin_9;
+
     cfg.data_buf = gs_nfca_pcd_data_buf;
     cfg.data_buf_size = NFCA_PCD_DATA_BUF_SIZE;
 
@@ -64,6 +105,11 @@ void nfca_pcd_init(void)
 
     /* 将数据区指针传入给NFC库内BUFFER指针 */
     nfca_pcd_lib_init(&cfg);
+
+#if NFCA_PCD_USE_NFC_CTR_PIN
+    nfca_pcd_ctr_init();
+#endif
+
 }
 
 /*********************************************************************
@@ -75,8 +121,12 @@ void nfca_pcd_init(void)
  *
  * @return  none
  */
+__HIGH_CODE
 void nfca_pcd_start(void)
 {
+#if NFCA_PCD_USE_NFC_CTR_PIN
+    nfca_pcd_ctr_on();
+#endif
     nfca_pcd_lib_start();
     PFIC_ClearPendingIRQ(NFC_IRQn);
     PFIC_EnableIRQ(NFC_IRQn);
@@ -91,6 +141,7 @@ void nfca_pcd_start(void)
  *
  * @return  none
  */
+__HIGH_CODE
 void nfca_pcd_stop(void)
 {
     nfca_pcd_lib_stop();
@@ -163,10 +214,12 @@ uint32_t nfca_pcd_rand(void)
  *
  * @return  检测的ADC值
  */
+__HIGH_CODE
 uint16_t nfca_adc_get_ant_signal(void)
 {
     uint8_t  sensor, channel, config, tkey_cfg;
     uint16_t adc_data;
+    uint32_t adc_data_all;
 
     tkey_cfg = R8_TKEY_CFG;
     sensor = R8_TEM_SENSOR;
@@ -175,12 +228,20 @@ uint16_t nfca_adc_get_ant_signal(void)
 
     R8_TKEY_CFG &= ~RB_TKEY_PWR_ON;
     R8_ADC_CHANNEL = CH_INTE_NFC;
-    R8_ADC_CFG = RB_ADC_POWER_ON | RB_ADC_BUF_EN | (3 << 6) | (ADC_PGA_1_4 << 4);   /* -6DB采样 4M ADC_PGA_1_4 ADC_PGA_1_2 */
+    R8_ADC_CFG = RB_ADC_POWER_ON | RB_ADC_BUF_EN | (SampleFreq_8_or_4 << 6) | (ADC_PGA_1_4 << 4);   /* -12DB采样 ADC_PGA_1_4*/
     R8_ADC_CONVERT &= ~RB_ADC_PGA_GAIN2;
-    R8_ADC_CONVERT |= (3 << 4);                                                     /* 7个Tadc */
-    R8_ADC_CONVERT |= RB_ADC_START;
-    while (R8_ADC_CONVERT & RB_ADC_START);
-    adc_data = R16_ADC_DATA;
+    R8_ADC_CONVERT &= ~(3 << 4);  /* 4个Tadc */
+
+    adc_data_all = 0;
+
+    for(uint8_t i = 0; i < 2; i++)
+    {
+        R8_ADC_CONVERT |= RB_ADC_START;
+        while (R8_ADC_CONVERT & (RB_ADC_START | RB_ADC_EOC_X));
+        adc_data_all = adc_data_all + R16_ADC_DATA;
+    }
+
+    adc_data = adc_data_all / 2;
 
     R8_TEM_SENSOR = sensor;
     R8_ADC_CHANNEL = channel;
@@ -221,14 +282,14 @@ void nfca_pcd_lpcd_calibration(void)
     /* adc配置保存 */
     R8_TKEY_CFG &= ~RB_TKEY_PWR_ON;
     R8_ADC_CHANNEL = CH_INTE_NFC;
-    R8_ADC_CFG = RB_ADC_POWER_ON | RB_ADC_BUF_EN | (3 << 6) | (ADC_PGA_1_4 << 4);   /* -6DB采样 4M */
+    R8_ADC_CFG = RB_ADC_POWER_ON | RB_ADC_BUF_EN | (SampleFreq_8_or_4 << 6) | (ADC_PGA_1_4 << 4);   /* -12DB采样 ADC_PGA_1_4*/
     R8_ADC_CONVERT &= ~RB_ADC_PGA_GAIN2;
-    R8_ADC_CONVERT |= (3 << 4);                                                     /* 7个Tadc */
+    R8_ADC_CONVERT &= ~(3 << 4);  /* 4个Tadc */
 
     for(i = 0; i < 10; i++)
     {
         R8_ADC_CONVERT |= RB_ADC_START;
-        while (R8_ADC_CONVERT & RB_ADC_START);
+        while (R8_ADC_CONVERT & (RB_ADC_START | RB_ADC_EOC_X));
         adc_value = R16_ADC_DATA;
 
         if(adc_value > adc_max)
@@ -271,6 +332,7 @@ void nfca_pcd_lpcd_calibration(void)
  *
  * @return  uint16_t - 新的低功耗检卡的ADC阈值基准
  */
+__HIGH_CODE
 static uint16_t nfca_pcd_lpcd_adc_filter_buf_add(uint16_t lpcd_adc)
 {
     uint32_t lpcd_adc_all = 0;
@@ -295,6 +357,7 @@ static uint16_t nfca_pcd_lpcd_adc_filter_buf_add(uint16_t lpcd_adc)
  *
  * @return          1 有卡，0无卡.
  */
+__HIGH_CODE
 uint8_t nfca_pcd_lpcd_check(void)
 {
     uint32_t adc_value_diff;
@@ -358,7 +421,6 @@ uint8_t nfca_pcd_lpcd_check(void)
     }
 
     gs_lpcd_adc_base_value = nfca_pcd_lpcd_adc_filter_buf_add(adc_value);
-    PRINTF("gs_lpcd_adc_base_value:%d\n", gs_lpcd_adc_base_value);
     return res;
 }
 

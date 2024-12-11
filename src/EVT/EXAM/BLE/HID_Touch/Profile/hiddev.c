@@ -767,7 +767,6 @@ static void hidDevDisconnected(void)
  */
 static void hidDevGapStateCB(gapRole_States_t newState, gapRoleEvent_t *pEvent)
 {
-    uint8_t param;
     // if connected
     if(newState == GAPROLE_CONNECTED)
     {
@@ -778,10 +777,6 @@ static void hidDevGapStateCB(gapRole_States_t newState, gapRoleEvent_t *pEvent)
 
         // connection not secure yet
         hidDevConnSecure = FALSE;
-
-        // don't start advertising when connection is closed
-        param = FALSE;
-        GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &param);
     }
     // if disconnected
     else if(hidDevGapState == GAPROLE_CONNECTED &&

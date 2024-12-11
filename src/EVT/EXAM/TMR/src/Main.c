@@ -17,6 +17,8 @@ __attribute__((aligned(4))) uint32_t PwmBuf[100];
 
 volatile uint8_t capFlag = 0;
 
+#define  g_10us  (FREQ_SYS/100000)
+
 /*********************************************************************
  * @fn      DebugInit
  *
@@ -66,8 +68,8 @@ int main()
     GPIOB_ResetBits(GPIO_Pin_22); // 配置PWM口 PB22
     GPIOB_ModeCfg(GPIO_Pin_22, GPIO_ModeOut_PP_5mA);
     TMR3_PWMInit(High_Level, PWM_Times_1);
-    TMR3_PWMCycleCfg(624 * 10); // 周期 100us  最大67108864
-    TMR3_PWMActDataWidth(3120); // 占空比 50%, 修改占空比必须暂时关闭定时器
+    TMR3_PWMCycleCfg(g_10us * 10); // 周期 100us  最大67108864
+    TMR3_PWMActDataWidth(g_10us/2 * 10);  // 占空比 50%, 修改占空比必须暂时关闭定时器
     TMR3_PWMEnable();
     TMR3_Enable();
 
@@ -120,14 +122,14 @@ int main()
     GPIOPinRemap(ENABLE, RB_PIN_TMR2);
 
     PRINT("TMR2 DMA PWM\n");
-    TMR2_PWMCycleCfg(624 * 200); // 周期 2000us
+    TMR2_PWMCycleCfg(g_10us * 200); // 周期 2000us
     for(i=0; i<50; i++)
     {
-      PwmBuf[i]=3120*i;
+      PwmBuf[i]=(g_10us/2 * 10) * i;
     }
     for(i=50; i<100; i++)
     {
-      PwmBuf[i]=3120*(100-i);
+      PwmBuf[i]=(g_10us/2 * 10)*(100-i);
     }
     TMR2_PWMInit(Low_Level, PWM_Times_16);
     TMR2_DMACfg(ENABLE, (uint32_t)&PwmBuf[0], (uint32_t)&PwmBuf[100], Mode_LOOP);

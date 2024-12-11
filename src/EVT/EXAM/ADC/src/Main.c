@@ -287,7 +287,7 @@ void ADC_IRQHandler(void) //adc中断服务程序
     if(ADC_GetDMAStatus())
     {
         ADC_StopAutoDMA();
-        R32_ADC_DMA_BEG = ((uint32_t)adcBuff) & 0xffff;
+        R32_ADC_DMA_BEG = ((uint32_t)adcBuff) & 0x1ffff;
         ADC_ClearDMAFlag();
         DMA_end = 1;
     }

@@ -207,9 +207,9 @@ extern void nfca_pcd_set_recv_gain(NFCA_PCD_REC_GAIN_Def gain);
 /*******************************************************************************
  * @fn              nfca_pcd_set_lp_ctrl
  *
- * @brief           nfc-a设置低功耗检卡档位，默认0.8VDD
+ * @brief           nfc-a设置天线信号检测档位，默认0.8VDD
  *
- * @param           lp - NFCA_PCD_LP_CTRL_Def，低功耗检卡档位
+ * @param           lp - NFCA_PCD_LP_CTRL_Def，天线信号检测档位
  *
  * @return          None.
  */
@@ -251,11 +251,11 @@ extern void nfca_pcd_set_wait_us(uint16_t us);
 /*******************************************************************************
  * @fn              nfca_pcd_get_lp_status
  *
- * @brief           NFC读取低功耗检卡状态接收超时时间
+ * @brief           NFC读取天线信号是否过低
  *
  * @param           None.
  *
- * @return          1如果有卡，0无卡.
+ * @return          1低于设定阈值，0不低于设定阈值.
  */
 extern uint8_t nfca_pcd_get_lp_status(void);
 

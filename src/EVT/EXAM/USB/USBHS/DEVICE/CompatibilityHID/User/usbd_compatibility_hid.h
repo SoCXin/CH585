@@ -32,7 +32,6 @@ extern volatile uint16_t Uart_Input_Ptr;      //Circular buffer write pointer
 extern volatile uint16_t Uart_RecLen;         //The number of bytes remaining to be fetched in the current buffer
 extern volatile uint16_t USB_RecLen;          //Data received by USB endpoint
 extern volatile uint8_t  UploadPoint_Busy;    //Upload whether the endpoint is busy
-extern volatile uint8_t  DownloadPoint_Busy;  //Download whether the endpoint is busy
 extern volatile uint16_t Uart_Timeout_Count;  //Timeout processing calculation time
 
 extern void UART2_Tx_Service( void );

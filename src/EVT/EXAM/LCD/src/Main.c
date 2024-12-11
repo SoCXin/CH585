@@ -50,28 +50,13 @@ int main()
 
     /* LCD + sleep 示例 */
 #if 1
-    /* 配置唤醒源为 GPIO - PB0 */
-    GPIOB_ModeCfg(GPIO_Pin_0, GPIO_ModeIN_PU);
-    GPIOB_ITModeCfg(GPIO_Pin_0, GPIO_ITMode_FallEdge); // 下降沿唤醒
-    PFIC_EnableIRQ(GPIO_B_IRQn);
+    /* 配置唤醒源为 GPIO - PA5 */
+    GPIOA_ModeCfg(GPIO_Pin_5, GPIO_ModeIN_PU);
+    GPIOA_ITModeCfg(GPIO_Pin_5, GPIO_ITMode_FallEdge); // 下降沿唤醒
+    PFIC_EnableIRQ(GPIO_A_IRQn);
     PWR_PeriphWakeUpCfg(ENABLE, RB_SLP_GPIO_WAKE, Long_Delay);
-    VER = (*((PUINT32)ROM_CFG_VERISON));
-    if((VER&0xFF000000) == 0xFF000000)
-    {
-        aux_power = R16_AUX_POWER_ADJ;
-        sys_safe_access_enable();
-        R16_AUX_POWER_ADJ |= RB_ULPLDO_ADJ;      //睡眠前必须加此代码
-        sys_safe_access_disable();
-    }
-    // 注意当主频为80M时，Sleep睡眠唤醒中断不可调用flash内代码。
     LowPower_Sleep(RB_PWR_RAM32K | RB_PWR_RAM96K | RB_XT_PRE_EN); //只保留96+32K SRAM 供电
     HSECFG_Current(HSE_RCur_100);                 // 降为额定电流(低功耗函数中提升了HSE偏置电流)
-    if((VER&0xFF000000) == 0xFF000000)
-    {
-        sys_safe_access_enable();
-        R16_AUX_POWER_ADJ = aux_power;
-        sys_safe_access_disable();
-    }
 #endif
 
     while(1);
@@ -79,15 +64,15 @@ int main()
 }
 
 /*********************************************************************
- * @fn      GPIOB_IRQHandler
+ * @fn      GPIOA_IRQHandler
  *
- * @brief   GPIOB中断函数
+ * @brief   GPIOA中断函数
  *
  * @return  none
  */
 __INTERRUPT
 __HIGH_CODE
-void GPIOB_IRQHandler(void)
+void GPIOA_IRQHandler(void)
 {
-    GPIOB_ClearITFlagBit(GPIO_Pin_0);
+    GPIOA_ClearITFlagBit(GPIO_Pin_5);
 }

@@ -1,5 +1,5 @@
 
-Nanjing Qinheng Microelectronics Co., Ltd. 2024.08
+Nanjing Qinheng Microelectronics Co., Ltd. 2024.11
 
 http://wch-ic.com
 
@@ -21,15 +21,20 @@ Directory
   |      |      |      |-- RT-Thread: RT-Thread porting routine
   |      |      |      |-- I2C: I2C routines, master/slave mode, data transceiver
   |      |      |      |-- LCD: LCD routines, including LCD display and LCD sleep
+  |      |      |      |-- LED LED routines, LED screen controller interface demonstration
   |      |      |      |-- NFCA
   |      |      |      |      |-- NFCA_COMMON: ISO14443-3A and Universal M1 Encryption Algorithm Library Universal File
   |      |      |      |      |-- PCD: 
   |      |      |      |      |      |-- NFCA_PCD_LIB: NFC-A underlying code and library files
   |      |      |      |      |      |-- MifareClassic: MifareClassic Card Operation Example Project
+  |      |      |      |      |-- PICC: 
+  |      |      |      |      |      |-- NFCA_PICC_LIB: NFC card mode underlying code and library files
+  |      |      |      |      |      |-- PICC_M1: NFC card mode simulation M1 card example project
   |      |      |      |      |-- CH585 NFC Card Reader Application Guide.pdf
   |      |      |      |-- IAP
   |      |      |      |      |-- APP: APP program routine used with IAP 
   |      |      |      |      |-- USB_IAP: Routine to update on-chip program via USB 
+  |      |      |      |      |-- USBHS_IAP: Routine to update on-chip program via High-speed USB 
   |      |      |      |      |-- UART_IAP: Routines to update the on-chip program via UART 
   |      |      |      |      |-- WCHMcuIAP_WinAPP: IAP PC tools and source code
   |      |      |      |-- PM: Syetem sleep mode and wake-up routine: GPIOA_5 as wake-up source, four power consumption levels
@@ -92,6 +97,7 @@ Directory
   |      |      |      |      |-- HID_Mouse: BLE mouse routine, simulate a mouse device, upload key value regularly after connected to the central
   |      |      |      |      |-- HID_Consumer: BLE consumer routine, simulate user control device, upload volume key down key regularly after connected to the central
   |      |      |      |      |-- HID_Touch: BLE touch routine, simulate a touch pencil device,  upload touch value regularly after connected to the central
+  |      |      |      |      |-- HID_NFC_NDEF_Connect: NFC card to connect Bluetooth HID routine
   |      |      |      |      |-- MultiCentral: multicentral routine, actively scan surrounding devices, conect to the specified three peripheral addresses, search custom services and characteristics, execute read/write commands, peripheral routine is needed, and modify the peripheral address to this routine target address, the addresses of these peripherals are (84:C2:E4:03:02:02), (84:C2:E4:03:02:03) and (84:C2:E4:03:02:04) by default
   |      |      |      |      |-- Observer: observer routine, scan regularly, print the scanned broadcast address if the scanning result is not empty
   |      |      |      |      |-- Direct_Test_Mode£ºDTM test routine, combined with RF test tools

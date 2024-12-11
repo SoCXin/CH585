@@ -20,3 +20,4 @@ listing
 *.ZIP
 *.hex
 obj/
+PUB/

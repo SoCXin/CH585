@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : wch_nfca_pcd_bsp.h
  * Author             : WCH
- * Version            : V1.0
- * Date               : 2024/08/22
+ * Version            : V1.1
+ * Date               : 2024/11/14
  * Description        : NFC-A PCD BSP底层接口
  *********************************************************************************
  * Copyright (c) 2024 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -118,5 +118,27 @@ extern nfca_pcd_controller_state_t nfca_pcd_wait_communicate_end(void);
  * @return          uint32_t，返回一个随机数
  */
 extern uint32_t nfca_pcd_rand(void);
+
+/*******************************************************************************
+ * @fn              nfca_pcd_ctr_init
+ *
+ * @brief           nfc-a pcd 天线信号控制初始化
+ *
+ * @param           None.
+ *
+ * @return          None.
+ */
+extern void nfca_pcd_ctr_init(void);
+
+/*******************************************************************************
+ * @fn              nfca_pcd_ctr_handle
+ *
+ * @brief           nfc-a pcd 天线信号控制处理
+ *
+ * @param           None.
+ *
+ * @return          None.
+ */
+extern void nfca_pcd_ctr_handle(void);
 
 #endif /* _WCH_NFCA_PCD_BSP_H_ */

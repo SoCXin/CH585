@@ -9,11 +9,11 @@
 
 ``` mermaid
 gantt
-    title WCH SDK
+    title CH585 EVT
     dateFormat  YYYY-MM-DD
     section Mainline Release
-    v1.0           :a1, 2024-06-01, 2024-09-30
-    v1.1           :a2, 2024-09-30, 2024-12-30
+    v1.1           :a1, 2024-09-30, 2024-11-25
+    v1.2           :a2, 2024-11-25, 2024-12-30
 ```
 
 ### 关键特性

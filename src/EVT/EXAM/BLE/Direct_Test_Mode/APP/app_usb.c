@@ -19,6 +19,7 @@
 #include "buf.h"
 #include "uart.h"
 #include "app_usb.h"
+#include "usb_desc.h"
 
 /*********************************************************************
  * MACROS
@@ -34,7 +35,7 @@ const uint8_t *pDescr;
 
 #define DevEP0SIZE  0x40
 // 设备描述符
-const uint8_t MyDevDescr[] = { 0x12,0x01,0x10,0x01,0xFF,0x00,0x00,DevEP0SIZE,
+const uint8_t My_DevDescr[] = { 0x12,0x01,0x10,0x01,0xFF,0x00,0x00,DevEP0SIZE,
                              0x86,0x1A,0x23,0x75,0x63,0x02,0x00,0x02,
                              0x00,0x01 };
 // 配置描述符
@@ -44,11 +45,11 @@ const uint8_t MyCfgDescr[] = {   0x09,0x02,0x27,0x00,0x01,0x01,0x00,0x80,0xf0,  
                                  0x07,0x05,0x02,0x02,0x20,0x00,0x00,                        //批量下传端点
                                  0x07,0x05,0x81,0x03,0x08,0x00,0x01};                       //中断上传端点
 // 语言描述符
-const uint8_t MyLangDescr[] = { 0x04, 0x03, 0x09, 0x04 };
+//const uint8_t MyLangDescr[] = { 0x04, 0x03, 0x09, 0x04 };
 // 厂家信息
-const uint8_t MyManuInfo[] = { 0x0E, 0x03, 'w', 0, 'c', 0, 'h', 0, '.', 0, 'c', 0, 'n', 0 };
+//const uint8_t MyManuInfo[] = { 0x0E, 0x03, 'w', 0, 'c', 0, 'h', 0, '.', 0, 'c', 0, 'n', 0 };
 // 产品信息
-const uint8_t MyProdInfo[] = { 0x0C, 0x03, 'C', 0, 'H', 0, '5', 0, '9', 0, 'x', 0 };
+//const uint8_t MyProdInfo[] = { 0x0C, 0x03, 'C', 0, 'H', 0, '5', 0, '9', 0, 'x', 0 };
 /*产品描述符*/
 const uint8_t StrDesc[28] =
 {
@@ -91,7 +92,6 @@ void app_usb_init()
     pEP3_RAM_Addr = EP3_Databuf;
 
     USB_DeviceInit();
-    USB_Task_Init();
     PFIC_EnableIRQ( USB_IRQn );
 }
 
@@ -102,6 +102,7 @@ void app_usb_init()
  *
  * @return  none
  */
+__HIGH_CODE
 uint8_t USBSendData(uint8_t *buf, uint16_t len)
 {
     uint8_t i;
@@ -339,8 +340,8 @@ void USB_DevTransProcess( void )
             {
               case USB_DESCR_TYP_DEVICE :
               {
-                pDescr = MyDevDescr;
-                len = sizeof(MyDevDescr);
+                pDescr = My_DevDescr;
+                len = sizeof(My_DevDescr);
               }
                 break;
 

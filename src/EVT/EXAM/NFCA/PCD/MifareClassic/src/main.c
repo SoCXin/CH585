@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0
- * Date               : 2024/07/22
+ * Version            : V1.1
+ * Date               : 2024/11/14
  * Description        : NFC PCD Mifare Classic测试例程
  * Copyright (c) 2024 Nanjing Qinheng Microelectronics Co., Ltd.
  * SPDX-License-Identifier: Apache-2.0
@@ -106,13 +106,20 @@ void nfca_pcd_test(void)
     {
         nfca_pcd_start();
 
+#if 1   /* 置1先进行超低功耗检卡，对天线信号幅度影响小的设备可能会无法唤醒 */
         if(nfca_pcd_lpcd_check() == 0)
         {
             PRINTF("NO CARD\n");
             goto next_loop;
         }
         PRINTF("CARD DETECT\n");
+#endif
         mDelaymS(5);   /* 手机等模拟卡设备需要长时间的连续波唤醒其卡功能，普通实体卡 1 ms 即可 */
+
+#if NFCA_PCD_USE_NFC_CTR_PIN
+        nfca_pcd_ctr_handle();  /* 对天线信号进行检测，使用NFC CTR引脚控制幅度 */
+#endif
+
         res = PcdRequest(PICC_REQALL);
         if(res == 0x0004)
         {
@@ -200,7 +207,7 @@ void nfca_pcd_test(void)
 
 #endif  /* 读取前4个块数据测试 */
 
-#if 0   /* 所有扇区读取测试 */
+#if 1   /* 所有扇区读取测试 */
                     for (uint8_t l = 1; l < 16; l++)
                     {
                         res = PcdAuthState(PICC_AUTHENT1A, 4 * l, default_key, picc_uid);

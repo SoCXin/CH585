@@ -12,6 +12,7 @@
 
 /******************************************************************************/
 /* 头文件包含 */
+#include <usbhs_device.h>
 #include "CONFIG.h"
 #include "HAL.h"
 #include "test_dtm.h"
@@ -81,9 +82,13 @@ int main(void)
     test_dtm_init();
     GAPRole_CentralInit();
     uart_task_init();
-#if USB_UartEnable == 1
+#if USBFS_ENABLE
     app_usb_init();
 #endif
+#if USBHS_ENABLE
+    USBHS_Device_Init(ENABLE);
+#endif
+    USB_Task_Init();
     Main_Circulation();
 }
 

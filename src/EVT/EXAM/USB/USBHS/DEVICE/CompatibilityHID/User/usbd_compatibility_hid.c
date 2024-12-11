@@ -22,7 +22,6 @@ volatile uint16_t Uart_Input_Ptr;      //Circular buffer write pointer
 volatile uint16_t Uart_RecLen;         //The number of bytes remaining to be fetched in the current buffer
 volatile uint16_t USB_RecLen;          //Data received by USB endpoint
 volatile uint8_t  UploadPoint_Busy;    //Upload whether the endpoint is busy
-volatile uint8_t  DownloadPoint_Busy;  //Download whether the endpoint is busy
 volatile uint16_t Uart_Timeout_Count;  //Timeout processing calculation time
 
 /*********************************************************************
@@ -129,7 +128,6 @@ void USART2_Init( uint32_t baudrate )
     Uart_RecLen = 0;
     USB_RecLen = 0;
     UploadPoint_Busy = 0;
-    DownloadPoint_Busy = 1;
     Uart_Timeout_Count = 0;
 
 }

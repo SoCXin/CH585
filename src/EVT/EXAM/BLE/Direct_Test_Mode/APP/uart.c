@@ -10,6 +10,7 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
+#include <usbhs_device.h>
 #include "CH58x_common.h"
 #include "config.h"
 #include "uart.h"
@@ -72,13 +73,11 @@ void usb_buffer_create(struct simple_buf **buf)
 int uart_start_receiving(void)
 {
 #if DEBUG == 1
-    PRINT("uart0 receiving\n");
     uart_flag = UART_STATUS_RCVING;
     uart_buffer_create(&uart_buf);
     PFIC_EnableIRQ(UART0_IRQn);
 
 #elif DEBUG == 0
-    PRINT("uart1 receiving\n");
     uart_flag = UART_STATUS_RCVING;
     uart_buffer_create(&uart_buf);
     PFIC_EnableIRQ(UART1_IRQn);
@@ -98,7 +97,6 @@ int uart_start_receiving(void)
  */
 int usb_start_receiving(void)
 {
-    PRINT("usb receiving\n");
     usb_flag = USB_STATUS_RCVING;
     usb_buffer_create(&usb_buf);
 
@@ -130,7 +128,7 @@ int uart_send(struct simple_buf *buf)
         UART0_SendString(send_data, send_len);
         uart_flag = UART_STATUS_IDLE;
 
-        PRINT("uart0 send %d bytes\n", send_len);
+//        PRINT("uart0 send %d bytes\n", send_len);
 //        PRINT("[\n");
 //        for(int i = 0; i < send_len; i++)
 //        {
@@ -152,7 +150,7 @@ int uart_send(struct simple_buf *buf)
     uart_flag = UART_STATUS_IDLE;
 
 
-    PRINT("uart1 send %d bytes\n", send_len);
+//    PRINT("uart1 send %d bytes\n", send_len);
 //    PRINT("[\n");
 //    for(int i = 0; i < send_len; i++)
 //    {
@@ -185,10 +183,15 @@ int usb_send(struct simple_buf *buf)
     send_len = buf->len;
     send_data = simple_buf_pull(buf, buf->len);
 
+#if USBFS_ENABLE == 1
     USBSendData(send_data, send_len);
-    uart_flag = UART_STATUS_IDLE;
+#endif
+#if USBHS_ENABLE == 1
+    USBHS_Endp_DataUp(DEF_UEP2, send_data, send_len, DEF_UEP_CPY_LOAD);
+#endif
 
-    PRINT("usb send %d bytes\n", send_len);
+    usb_flag = UART_STATUS_IDLE;
+//    PRINT("usb send %d bytes\n", send_len);
 //    PRINT("[\n");
 //    for(int i = 0; i < send_len; i++)
 //    {
@@ -230,7 +233,7 @@ tmosEvents uart_processevent(tmosTaskID task_id, tmosEvents events)
     {
         if(uart_flag == UART_STATUS_RCV_END)
         {
-            PRINT("uart recevied %d bytes\n", uart_buf->len);
+//            PRINT("uart recevied %d bytes\n", uart_buf->len);
 //            PRINT("[\n");
 //            for(int i = 0; i < uart_buf->len; i++)
 //            {
@@ -262,7 +265,7 @@ tmosEvents uart_processevent(tmosTaskID task_id, tmosEvents events)
 //        PRINT("usb_flag:%d\n",usb_flag);
         if(usb_flag == USB_STATUS_RCV_END)
         {
-            PRINT("usb recevied %d bytes\n", usb_buf->len);
+//            PRINT("usb recevied %d bytes\n", usb_buf->len);
 //            PRINT("[\n");
 //            for(int i = 0; i < usb_buf->len; i++)
 //            {

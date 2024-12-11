@@ -74,12 +74,12 @@ void SetSysClock(SYS_CLKTypeDef sc)
             else if((sc&0x1F) < 10)
             {
                 R8_FLASH_SCK = R8_FLASH_SCK & (~(1<<4));
-                R8_FLASH_CFG = 0X02;
+                R8_FLASH_CFG = 0X01;
             }
             else if((sc&0x1F) < 16)
             {
                 R8_FLASH_SCK = R8_FLASH_SCK & (~(1<<4));
-                R8_FLASH_CFG = 0X03;
+                R8_FLASH_CFG = 0X02;
             }
             else
             {
@@ -588,4 +588,16 @@ void *_sbrk(ptrdiff_t incr)
     return curbrk - incr;
 }
 
-
+/*********************************************************************
+ * @fn      __wrap_memcpy
+ *
+ * @brief   wrap memcpy
+ *
+ * @return  dst
+ */
+__HIGH_CODE
+void *__wrap_memcpy(void *dst, void *src, size_t size)
+{
+    __MCPY(dst, src, (void *)((uint32_t)src+size));
+    return dst;
+}
