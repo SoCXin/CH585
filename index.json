@@ -7,7 +7,7 @@
     "Core": {
         "num": 1,
         "type":"RISC-V3C",
-        "Freq": 40,
+        "Freq": 78,
         "DMIPS": 100,
         "CoreMark": 160
     },
